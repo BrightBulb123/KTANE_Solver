@@ -46,73 +46,129 @@ def bool_getter(s: str) -> bool:
         return ans.strip().lower() in ("y", "yes")
 
 
-class module:
-    def __init__(self, name: str, func: callable, args: list) -> None:
-        self.name = name
-        self.func = func
-        self.args = args
+class modules:
+    def __init__(self, indicators: dict, ports: dict, ser: serial) -> None:
+        self.indicators = indicators
+        self.ports = ports
+        self.ser = ser
+        self.main_modules = {1: "Wires", 2: "Button",
+                             3: "Keypads", 4: "Simon Says",
+                             5: "Who's on First", 6: "Memory",
+                             7: "Morse Code", 8: "Complicated Wires",
+                             9: "Wire Sequences", 10: "Mazes",
+                             11: "Passwords"}
+        self.function_mappings = {"Wires": self.wires, "Button": self.button,
+                                  "Keypads": self.keypads, "Simon Says": self.simon_says,
+                                  "Who's on First": self.whos_on_first, "Memory": self.memory,
+                                  "Morse Code": self.morse_code, "Complicated Wires": self.complicated_wires,
+                                  "Wire Sequences": self.wire_sequences, "Mazes": self.mazes,
+                                  "Passwords": self.passwords}
 
+        while True:
+            print("\nPlease pick one of the modules to solve using the corresponding number:")
+            for item, value in self.main_modules.items():
+                print(f"{item}: {value}")
 
-def wires(serial_number: serial):
-    how_many_wires = int_getter("How many wires are on the bomb?")
+            m = int_getter("Which module: ")
 
-    if how_many_wires == 3:
-        ans = bool_getter("Are there any red wires?")
-        if ans:
-            return "\nCut the second wire."
+            print(self.function_mappings[self.main_modules[m]]())
 
-        ans = bool_getter("Is there more than one blue wire?")
-        if ans:
-            return "\nCut the last blue wire."
+            if bool_getter("Would you like to continue?"):
+                continue
+            break
 
-        return "\nCut the last wire."
-    elif how_many_wires == 4:
-        if not serial_number.last_digit_even:
-            ans = bool_getter("Is there more than one red wire?")
-            if ans:
-                return "\nCut the last red wire."
+    def keep_playing(self):
+        return bool_getter("Would you like to continue?")
 
-        ans = bool_getter("Is the last wire yellow?")
-        if ans:
+    def wires(self) -> str:
+        how_many_wires = int_getter("How many wires are on the bomb?")
+
+        if how_many_wires == 3:
             ans = bool_getter("Are there any red wires?")
-        if ans:
-            return "\nCut the first wire."
-
-        ans = bool_getter("Is there ONLY ONE blue wire?")
-        if ans:
-            return "\nCut the first wire."
-
-        ans = bool_getter("Is there more than one yellow wire?")
-        if ans:
-            return "\nCut the last wire."
-
-        return "\nCut the second wire."
-    elif how_many_wires == 5:
-        if not serial_number.last_digit_even:
-            ans = bool_getter("Is the last wire black?")
             if ans:
-                return "\nCut the fourth wire."
+                return "\nCut the second wire."
 
-        ans = bool_getter("Are there any black wires?")
-        if not ans:
-            return "\nCut the second wire."
+            ans = bool_getter("Is there more than one blue wire?")
+            if ans:
+                return "\nCut the last blue wire."
 
-        return "\nCut the first wire."
-    else:
-        if not serial_number.last_digit_even:
-            ans = bool_getter("Are there any yellow wires?")
-            if not ans:
-                return "\nCut the third wire."
-
-        ans = bool_getter("Are there any red wires?")
-        if not ans:
             return "\nCut the last wire."
+        elif how_many_wires == 4:
+            if not self.ser.last_digit_even:
+                ans = bool_getter("Is there more than one red wire?")
+                if ans:
+                    return "\nCut the last red wire."
 
-        return "\nCut the fourth wire."
+            ans = bool_getter("Is the last wire yellow?")
+            if ans:
+                ans = bool_getter("Are there any red wires?")
+            if ans:
+                return "\nCut the first wire."
+
+            ans = bool_getter("Is there ONLY ONE blue wire?")
+            if ans:
+                return "\nCut the first wire."
+
+            ans = bool_getter("Is there more than one yellow wire?")
+            if ans:
+                return "\nCut the last wire."
+
+            return "\nCut the second wire."
+        elif how_many_wires == 5:
+            if not self.ser.last_digit_even:
+                ans = bool_getter("Is the last wire black?")
+                if ans:
+                    return "\nCut the fourth wire."
+
+            ans = bool_getter("Are there any black wires?")
+            if not ans:
+                return "\nCut the second wire."
+
+            return "\nCut the first wire."
+        else:
+            if not self.ser.last_digit_even:
+                ans = bool_getter("Are there any yellow wires?")
+                if not ans:
+                    return "\nCut the third wire."
+
+            ans = bool_getter("Are there any red wires?")
+            if not ans:
+                return "\nCut the last wire."
+
+            return "\nCut the fourth wire."
+
+    def button(self) -> str:
+        pass
+
+    def keypads(self) -> str:
+        pass
+
+    def simon_says(self) -> str:
+        pass
+
+    def whos_on_first(self) -> str:
+        pass
+
+    def memory(self) -> str:
+        pass
+
+    def morse_code(self) -> str:
+        pass
+
+    def complicated_wires(self) -> str:
+        pass
+
+    def wire_sequences(self) -> str:
+        pass
+
+    def mazes(self) -> str:
+        pass
+
+    def passwords(self) -> str:
+        pass
 
 
 def main():
-
     indicators = {"SND": indicator(False, False), "CLR": indicator(False, False), "CAR": indicator(False, False),
                   "IND": indicator(False, False), "FRQ": indicator(False, False), "SIG": indicator(False, False),
                   "NSA": indicator(False, False), "MSA": indicator(False, False), "TRN": indicator(False, False),
@@ -124,22 +180,10 @@ def main():
 
     ser = serial(input("\nWhat is the serial number (6 character string) of the bomb: "))
 
-    main_modules = {1: module("Wires", wires, [ser]), 2: module("Button", None, []),
-                    3: module("Keypads", None, []), 4: module("Simon Says", None, []),
-                    5: module("Who's on First", None, []), 6: module("Memory", None, []),
-                    7: module("Morse Code", None, []), 8: module("Complicated Wires", None, []),
-                    9: module("Wire Sequences", None, []), 10: module("Mazes", None, []),
-                    11: module("Passwords", None, [])}
 
-    while True:
-        print("\nPlease pick one of the modules to solve using the corresponding number:")
-        for item, value in main_modules.items():
-            print(f"{item}: {value.name}")
+    game = modules(indicators, ports, ser)
 
-        m = int_getter("Which module: ")
-
-        print(main_modules[m].func(*main_modules[m].args))
-        break
+    print("\n\nExiting...")
 
 
 if __name__ == "__main__":
