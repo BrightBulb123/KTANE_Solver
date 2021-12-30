@@ -3,14 +3,15 @@ This is a program to guide you through the game "Keep Talking and Nobody Explode
 It assumes some prior knowledge of the game itself.
 """
 
-# TODO add separate functions for all the modules
+# TODO add separate functions for all the modules, serial number error checking
 
 
 class indicator:
     """An indicator label on a bomb"""
-    def __init__(self, isPresent: bool, isLit: bool) -> None:
+    def __init__(self, isPresent: bool, isLit: bool, asked: bool) -> None:
         self.isPresent = isPresent
         self.isLit = isLit
+        self.asked = asked
 
 
 class serial:
@@ -47,10 +48,11 @@ def bool_getter(s: str) -> bool:
 
 
 class modules:
-    def __init__(self, indicators: dict, ports: dict, ser: serial) -> None:
+    def __init__(self, indicators: dict, ports: dict, ser: serial, batteries: int) -> None:
         self.indicators = indicators
         self.ports = ports
         self.ser = ser
+        self.batteries = batteries
         self.main_modules = {1: "Wires", 2: "Button",
                              3: "Keypads", 4: "Simon Says",
                              5: "Who's on First", 6: "Memory",
@@ -69,7 +71,7 @@ class modules:
             for item, value in self.main_modules.items():
                 print(f"{item}: {value}")
 
-            m = int_getter("Which module: ")
+            m = int_getter("Which module:")
 
             print(self.function_mappings[self.main_modules[m]]())
 
@@ -77,11 +79,25 @@ class modules:
                 continue
             break
 
-    def keep_playing(self):
-        return bool_getter("Would you like to continue?")
+    def indicator_checker(self, indicator: str) -> None:
+        if not self.indicators[indicator].asked:
+            ans = bool_getter(f"Is there an indicator with the label '{indicator}' (without the quotation marks)?")
+            if ans:
+                self.indicators[indicator].isPresent = True
+                ans = bool_getter(f"Is the indicator labelled '{indicator}' (without the quotation marks) lit?")
+            if ans:
+                self.indicators[indicator].isLit = True
+            self.indicators[indicator].asked = True
+            return False
 
     def wires(self) -> str:
-        how_many_wires = int_getter("How many wires are on the bomb?")
+        while True:
+            how_many_wires = int_getter("How many wires are on the bomb?")
+
+            if how_many_wires < 3:
+                print("The minimum number of wires is 3!")
+                continue
+            break
 
         if how_many_wires == 3:
             ans = bool_getter("Are there any red wires?")
@@ -138,7 +154,42 @@ class modules:
             return "\nCut the fourth wire."
 
     def button(self) -> str:
-        pass
+        button_held = True
+
+        if self.batteries > 1:
+            ans = bool_getter("Does the button say 'Detonate' (without the quotation marks)?")
+            if ans:
+                button_held = False
+
+            elif self.batteries > 2:
+                indicator = "FRK"
+                self.indicator_checker(indicator)
+                if self.indicators[indicator].isPresent and self.indicators[indicator].isLit:
+                    button_held = False
+
+            else:
+                ans = bool_getter("Is the button red?")
+                if ans:
+                    ans = bool_getter("Does the button say 'Hold' (without the quotation marks)?")
+                if ans:
+                    button_held = False
+
+
+        if not button_held:
+            return "\nPress and immediately release the button."
+
+        print("Press and hold the button. A strip will light up next to it.")
+        print("Pick the colour of the strip by entering the corresponding number to the colour:")
+
+        colours = {1: "Blue", 2: "White", 3: "Yellow", 4: "Other"}
+        colour_mappings = {"Blue": 4, "White": 1, "Yellow": 5, "Other": 1}
+
+        for item, value in colours.items():
+            print(f"{item}: {value}")
+
+        colour = int_getter("Which colour:")
+
+        return f"Release the button when the count-down timer has a {colour_mappings[colours[colour]]} in any position."
 
     def keypads(self) -> str:
         pass
@@ -169,10 +220,10 @@ class modules:
 
 
 def main():
-    indicators = {"SND": indicator(False, False), "CLR": indicator(False, False), "CAR": indicator(False, False),
-                  "IND": indicator(False, False), "FRQ": indicator(False, False), "SIG": indicator(False, False),
-                  "NSA": indicator(False, False), "MSA": indicator(False, False), "TRN": indicator(False, False),
-                  "BOB": indicator(False, False), "FRK": indicator(False, False)}
+    indicators = {"SND": indicator(False, False, False), "CLR": indicator(False, False, False), "CAR": indicator(False, False, False),
+                  "IND": indicator(False, False, False), "FRQ": indicator(False, False, False), "SIG": indicator(False, False, False),
+                  "NSA": indicator(False, False, False), "MSA": indicator(False, False, False), "TRN": indicator(False, False, False),
+                  "BOB": indicator(False, False, False), "FRK": indicator(False, False, False)}
 
     ports = {"DVI-D": False, "Parallel": False,
              "PS/2": False, "RJ-45": False,
@@ -180,8 +231,10 @@ def main():
 
     ser = serial(input("\nWhat is the serial number (6 character string) of the bomb: "))
 
+    batteries = int_getter("How many batteries are on the bomb (total)?")
 
-    game = modules(indicators, ports, ser)
+
+    game = modules(indicators, ports, ser, batteries)
 
     print("\n\nExiting...")
 
