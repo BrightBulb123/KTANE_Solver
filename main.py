@@ -3,7 +3,7 @@ This is a program to guide you through the game "Keep Talking and Nobody Explode
 It assumes some prior knowledge of the game itself.
 """
 
-# TODO add separate functions for all the modules, figure out a way to pass in parameters to the function in the module class without calling the function
+# TODO add separate functions for all the modules
 
 
 class indicator:
@@ -31,24 +31,26 @@ class serial:
 
 
 def int_getter(s: str) -> int:
-    try:
-        ans = int(input(f"\n{s}"))
-    except ValueError:
-        print("\nPlease enter a valid integer!\n")
-    finally:
+    while True:
+        try:
+            ans = int(input(f"\n{s}\n"))
+        except ValueError:
+            print("\nPlease enter a valid integer!\n")
+            continue
         return ans
 
 
 def bool_getter(s: str) -> bool:
         print("\nPlease enter 'y' or 'yes' (without quotation marks) for a yes (anything else will be regarded as no).")
-        ans = input(f"\n{s}")
+        ans = input(f"\n{s}\n")
         return ans.strip().lower() in ("y", "yes")
 
 
 class module:
-    def __init__(self, name: str, func: callable) -> None:
+    def __init__(self, name: str, func: callable, args: list) -> None:
         self.name = name
         self.func = func
+        self.args = args
 
 
 def wires(serial_number: serial):
@@ -122,24 +124,21 @@ def main():
 
     ser = serial(input("\nWhat is the serial number (6 character string) of the bomb: "))
 
-    main_modules = {1: module("Wires", wires(ser)), 2: module("Button", None),
-                    3: module("Keypads", None), 4: module("Simon Says", None),
-                    5: module("Who's on First", None), 6: module("Memory", None),
-                    7: module("Morse Code", None), 8: module("Complicated Wires", None),
-                    9: module("Wire Sequences", None), 10: module("Mazes", None),
-                    11: module("Passwords", None)}
+    main_modules = {1: module("Wires", wires, [ser]), 2: module("Button", None, []),
+                    3: module("Keypads", None, []), 4: module("Simon Says", None, []),
+                    5: module("Who's on First", None, []), 6: module("Memory", None, []),
+                    7: module("Morse Code", None, []), 8: module("Complicated Wires", None, []),
+                    9: module("Wire Sequences", None, []), 10: module("Mazes", None, []),
+                    11: module("Passwords", None, [])}
 
     while True:
         print("\nPlease pick one of the modules to solve using the corresponding number:")
         for item, value in main_modules.items():
-            print(f"{item}: {value}")
+            print(f"{item}: {value.name}")
 
-        while True:
-            m = int_getter("Which module: ")
-            if type(m) == str:
-                continue
-            break
-        main_modules[m].func()
+        m = int_getter("Which module: ")
+
+        print(main_modules[m].func(*main_modules[m].args))
         break
 
 
