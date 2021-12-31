@@ -3,7 +3,7 @@ This is a program to guide you through the game "Keep Talking and Nobody Explode
 It assumes some prior knowledge of the game itself.
 """
 
-# TODO add separate functions for all the modules, serial number error checking
+# TODO add separate functions for all the modules
 
 
 class indicator:
@@ -219,6 +219,22 @@ class modules:
         pass
 
 
+def serial_getter(s: str) -> str:
+    ser = input(f"\n{s}\n")
+
+    if (len(ser) < 6) or (len(ser) > 6):
+        print("Please enter a valid six-character serial number!")
+        ser = serial_getter(s)
+
+    try:
+        int(ser[-1])
+    except ValueError:
+        print("Please enter a valid six-character serial number! The last digit must be an integer!")
+        ser = serial_getter(s)
+
+    return ser
+
+
 def main():
     indicators = {"SND": indicator(False, False, False), "CLR": indicator(False, False, False), "CAR": indicator(False, False, False),
                   "IND": indicator(False, False, False), "FRQ": indicator(False, False, False), "SIG": indicator(False, False, False),
@@ -229,7 +245,7 @@ def main():
              "PS/2": False, "RJ-45": False,
              "Serial": False, "Stereo RCA": False}
 
-    ser = serial(input("\nWhat is the serial number (6 character string) of the bomb: "))
+    ser = serial(serial_getter("\nWhat is the serial number (6 character string) of the bomb: "))
 
     batteries = int_getter("How many batteries are on the bomb (total)?")
 
