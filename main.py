@@ -3,7 +3,7 @@ This is a program to guide you through the game "Keep Talking and Nobody Explode
 It assumes some prior knowledge of the game itself.
 """
 
-# TODO add separate functions for all the modules
+# TODO add separate functions for: (keypads, simon_says, whos_on_first, memory, morse_code, complicated_wires, wire_sequences, mazes, passwords)
 
 
 class indicator:
