@@ -192,7 +192,30 @@ class modules:
         return f"Release the button when the count-down timer has a {colour_mappings[colours[colour]]} in any position."
 
     def keypads(self) -> str:
-        pass
+        order = []
+        all_columns = (("Ϙ", "Ӭ", "©", "б", "Ψ", "б"),
+                       ("Ѧ", "Ϙ", "Ѽ", "¶", "ټ", "Ӭ"),
+                       ("ƛ", "Ͽ", "Ҩ", "Ѣ", "Ѣ", "҂"),
+                       ("Ϟ", "Ҩ", "Җ", "Ѭ", "Ͼ", "æ"),
+                       ("Ѭ", "☆", "Ԇ", "Җ", "¶", "Ψ"),
+                       ("ϗ", "ϗ", "ƛ", "¿", "Ѯ", "Ҋ"),
+                       ("Ͽ", "¿", "☆", "ټ", "★", "Ω"))
+        all_symbols_tuple = ('Ͽ', 'ټ', 'Ҩ', '★', 'Ӭ', 'Ψ', 'Ͼ', '©', '҂',
+                             'Ѭ', '¿', 'Җ', 'б', 'Ϙ', 'Ԇ', 'Ѧ', 'Ѽ', '¶',
+                             'Ѯ', 'Ѣ', 'Ҋ', '☆', 'Ϟ', 'Ω', 'æ', 'ƛ', 'ϗ')
+        symbols = dict(zip(range(1, 28), all_symbols_tuple))
+
+        print("Please enter the corresponding number to the shapes that are on your keypad module.")
+        for item, value in symbols.items():
+            print(f"{item}: {value}")
+
+        first_symbol = int_getter("First symbol:")
+        second_symbol = int_getter("Second symbol:")
+        third_symbol = int_getter("Third symbol:")
+        fourth_symbol = int_getter("Fourth symbol:")
+
+        for symbol in (first_symbol, second_symbol, third_symbol, fourth_symbol):
+            pass
 
     def simon_says(self) -> str:
         pass
