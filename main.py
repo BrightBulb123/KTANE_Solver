@@ -3,7 +3,7 @@ This is a program to guide you through the game "Keep Talking and Nobody Explode
 It assumes some prior knowledge of the game itself.
 """
 
-# TODO add separate functions for: (keypads, simon_says, whos_on_first, memory, morse_code, complicated_wires, wire_sequences, mazes, passwords), add a check for first, second, third, and fourth symbols in the keypads module (value too low or high)
+# TODO add separate functions for: (keypads, simon_says, whos_on_first, memory, morse_code, complicated_wires, wire_sequences, mazes, passwords)
 
 
 class indicator:
@@ -31,14 +31,19 @@ class serial:
                 return True
 
 
-def int_getter(s: str) -> int:
-    while True:
-        try:
-            ans = int(input(f"\n{s}\n"))
-        except ValueError:
-            print("\nPlease enter a valid integer!\n")
-            continue
-        return ans
+def int_getter(s: str, lim: int = None) -> int:
+    try:
+        ans = int(input(f"\n{s}\n"))
+    except ValueError:
+        print("\nPlease enter a valid integer!\n")
+        ans = int_getter(s)
+
+
+    if (lim is not None) and (ans > lim):
+        print(f"Please enter a valid integer up to {lim}.")
+        ans = int_getter(s, lim)
+
+    return ans
 
 
 def bool_getter(s: str) -> bool:
@@ -208,10 +213,10 @@ class modules:
         for item, value in symbols.items():
             print(f"{item}: {value}")
 
-        first_symbol = symbols[int_getter("First symbol:")]
-        second_symbol = symbols[int_getter("Second symbol:")]
-        third_symbol = symbols[int_getter("Third symbol:")]
-        fourth_symbol = symbols[int_getter("Fourth symbol:")]
+        first_symbol = symbols[int_getter("First symbol:", 27)]
+        second_symbol = symbols[int_getter("Second symbol:", 27)]
+        third_symbol = symbols[int_getter("Third symbol:", 27)]
+        fourth_symbol = symbols[int_getter("Fourth symbol:", 27)]
 
         columns = [
             column
