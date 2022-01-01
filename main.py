@@ -3,7 +3,7 @@ This is a program to guide you through the game "Keep Talking and Nobody Explode
 It assumes some prior knowledge of the game itself.
 """
 
-# TODO add separate functions for: (keypads, simon_says, whos_on_first, memory, morse_code, complicated_wires, wire_sequences, mazes, passwords)
+# TODO add separate functions for: (simon_says, whos_on_first, memory, morse_code, complicated_wires, wire_sequences, mazes, passwords)
 
 
 class indicator:
@@ -101,6 +101,9 @@ class modules:
 
             if how_many_wires < 3:
                 print("The minimum number of wires is 3!")
+                continue
+            elif how_many_wires > 6:
+                print("The maximum number of wires is 6!")
                 continue
             break
 
@@ -238,7 +241,28 @@ class modules:
         return "\n".join(order)
 
     def simon_says(self) -> str:
-        pass
+        strikes = int_getter("How many strikes?", lim=2)
+        colours = {1: "Red", 2: "Yellow", 3: "Green", 4: "Blue"}
+        colour_mappings = {"Red": 1, "Yellow": 2, "Green": 3, "Blue": 4}
+
+        print("Enter the corresponding number to the colour shown:")
+        for item, value in colours.items():
+            print(f"{item}: {value}")
+
+        if self.ser.contains_vowel:
+            if strikes == 0:
+                pass
+            elif strikes == 1:
+                pass
+            else:
+                pass
+        else:
+            if strikes == 0:
+                pass
+            elif strikes == 1:
+                pass
+            else:
+                pass
 
     def whos_on_first(self) -> str:
         pass
@@ -293,7 +317,7 @@ def main():
     batteries = int_getter("How many batteries are on the bomb (total)?")
 
 
-    game = modules(indicators, ports, ser, batteries)
+    modules(indicators, ports, ser, batteries)
 
     print("\n\nExiting...")
 
