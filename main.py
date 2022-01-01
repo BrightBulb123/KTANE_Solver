@@ -3,7 +3,7 @@ This is a program to guide you through the game "Keep Talking and Nobody Explode
 It assumes some prior knowledge of the game itself.
 """
 
-# TODO add separate functions for: (keypads, simon_says, whos_on_first, memory, morse_code, complicated_wires, wire_sequences, mazes, passwords)
+# TODO add separate functions for: (keypads, simon_says, whos_on_first, memory, morse_code, complicated_wires, wire_sequences, mazes, passwords), add a check for first, second, third, and fourth symbols in the keypads module (value too low or high)
 
 
 class indicator:
@@ -193,13 +193,12 @@ class modules:
 
     def keypads(self) -> str:
         order = []
-        all_columns = (("Ϙ", "Ӭ", "©", "б", "Ψ", "б"),
-                       ("Ѧ", "Ϙ", "Ѽ", "¶", "ټ", "Ӭ"),
-                       ("ƛ", "Ͽ", "Ҩ", "Ѣ", "Ѣ", "҂"),
-                       ("Ϟ", "Ҩ", "Җ", "Ѭ", "Ͼ", "æ"),
-                       ("Ѭ", "☆", "Ԇ", "Җ", "¶", "Ψ"),
-                       ("ϗ", "ϗ", "ƛ", "¿", "Ѯ", "Ҋ"),
-                       ("Ͽ", "¿", "☆", "ټ", "★", "Ω"))
+        all_columns = (('Ϙ', 'Ѧ', 'ƛ', 'Ϟ', 'Ѭ', 'ϗ', 'Ͽ'),
+                       ('Ӭ', 'Ϙ', 'Ͽ', 'Ҩ', '☆', 'ϗ', '¿'),
+                       ('©', 'Ѽ', 'Ҩ', 'Җ', 'Ԇ', 'ƛ', '☆'),
+                       ('б', '¶', 'Ѣ', 'Ѭ', 'Җ', '¿', 'ټ'),
+                       ('Ψ', 'ټ', 'Ѣ', 'Ͼ', '¶', 'Ѯ', '★'),
+                       ('б', 'Ӭ', '҂', 'æ', 'Ψ', 'Ҋ', 'Ω'))
         all_symbols_tuple = ('Ͽ', 'ټ', 'Ҩ', '★', 'Ӭ', 'Ψ', 'Ͼ', '©', '҂',
                              'Ѭ', '¿', 'Җ', 'б', 'Ϙ', 'Ԇ', 'Ѧ', 'Ѽ', '¶',
                              'Ѯ', 'Ѣ', 'Ҋ', '☆', 'Ϟ', 'Ω', 'æ', 'ƛ', 'ϗ')
@@ -209,13 +208,29 @@ class modules:
         for item, value in symbols.items():
             print(f"{item}: {value}")
 
-        first_symbol = int_getter("First symbol:")
-        second_symbol = int_getter("Second symbol:")
-        third_symbol = int_getter("Third symbol:")
-        fourth_symbol = int_getter("Fourth symbol:")
+        first_symbol = symbols[int_getter("First symbol:")]
+        second_symbol = symbols[int_getter("Second symbol:")]
+        third_symbol = symbols[int_getter("Third symbol:")]
+        fourth_symbol = symbols[int_getter("Fourth symbol:")]
 
-        for symbol in (first_symbol, second_symbol, third_symbol, fourth_symbol):
-            pass
+        columns = [
+            column
+            for column in all_columns
+            if (first_symbol in column)
+            and (second_symbol in column)
+            and (third_symbol in column)
+            and (fourth_symbol in column)
+        ]
+
+        order = [
+            symbol
+            for column in columns
+            for symbol in column
+            if symbol in (first_symbol, second_symbol, third_symbol, fourth_symbol)
+        ]
+
+        print("Press the buttons on the keypad in this order:")
+        return "\n".join(order)
 
     def simon_says(self) -> str:
         pass
