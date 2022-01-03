@@ -3,7 +3,7 @@ This is a program to guide you through the game "Keep Talking and Nobody Explode
 It assumes some prior knowledge of the game itself.
 """
 
-# TODO add separate functions for: (simon_says, whos_on_first, memory, morse_code, complicated_wires, wire_sequences, mazes, passwords)
+# TODO add separate functions for: (simon_says, whos_on_first, memory, morse_code, complicated_wires, wire_sequences, mazes, passwords), make a separate function for simon says that gets called until module is defused/just list out a sequence
 
 
 class indicator:
